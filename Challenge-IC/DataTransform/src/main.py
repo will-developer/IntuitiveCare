@@ -19,7 +19,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
     
     anexo_path = os.path.join(temp_dir, anexo_file)
 
-    # PDF extraction with better configuration
+    # PDF extraction
     print("Extracting tables from PDF ------")
     try:
         dfs = tabula.read_pdf(
@@ -31,3 +31,15 @@ with tempfile.TemporaryDirectory() as temp_dir:
             
     except Exception as e:
         print(f"Extraction failed: {str(e)}")
+        
+    # extract tables    
+    processed_dfs = []
+    for df in dfs:
+        # Initial cleaning
+        df = df.dropna(axis=1, how='all')
+        
+        if not df.empty:
+            print(f"🔄 Processing table with {df.shape[0]} rows")
+            processed_dfs.append(df)
+
+    print(f"Cleaned {len(processed_dfs)} tables")
