@@ -16,7 +16,7 @@ for link in soup.find_all('a', class_='internal-link'):
     if href.endswith('.pdf') and ('Anexo I' in link_text or 'Anexo II' in link_text):
         pdf_links.append(href)
         #print(f'Found! {pdf_links}\n ------')
-        
+
 if not pdf_links:
     print('No Anexos found!')
     exit()
@@ -26,7 +26,8 @@ print("\nStart PDF downloads -----")
 for link in pdf_links:
     filename = link.split('/')[-1]
     print(f"download the: {filename}")
+    filepath = os.path.join('pdfs', filename)
     response = requests.get(link)
-    with open(filename, 'wb') as f:
+    with open(filepath, 'wb') as f:
         f.write(response.content)
 print("download Success")
