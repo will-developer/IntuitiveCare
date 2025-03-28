@@ -7,10 +7,12 @@ idna==3.10
 jpype1==1.5.2
 numpy==2.2.4
 packaging==24.2
+panda==0.3.1
 pandas==2.2.3
 python-dateutil==2.9.0.post0
 pytz==2025.2
 requests==2.32.3
+setuptools==78.1.0
 six==1.17.0
 soupsieve==2.6
 tabula-py==2.10.0
