@@ -22,6 +22,9 @@ if not pdf_links:
     exit()
 
 #Pdf dowloader
+if not os.path.exists('pdfs'):
+    os.makedirs('pdfs')
+
 print("\nStart PDF downloads -----")
 for link in pdf_links:
     filename = link.split('/')[-1]
