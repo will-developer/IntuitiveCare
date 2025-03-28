@@ -22,24 +22,23 @@ with tempfile.TemporaryDirectory() as temp_dir:
     # PDF extraction
     print("Extracting tables from PDF ------")
     try:
-        dfs = tabula.read_pdf(
+        data = tabula.read_pdf(
             anexo_path,
-            pages='1',
+            pages='all',
             lattice=True,
         )
-        print(f"Found {len(dfs)} tables")
+        print(f"Found {len(data)} tables")
             
     except Exception as e:
         print(f"Extraction failed: {str(e)}")
         
     # extract tables    
-    processed_dfs = []
-    for df in dfs:
-        # Initial cleaning
+    processed_data = []
+    for df in data:
+        # Initial cleaning empty tables
         df = df.dropna(axis=1, how='all')
         
         if not df.empty:
-            print(f"🔄 Processing table with {df.shape[0]} rows")
-            processed_dfs.append(df)
+            processed_data.append(df)
 
-    print(f"Cleaned {len(processed_dfs)} tables")
+    print(f"Cleaned {len(processed_data)} empty tables tables")
