@@ -19,11 +19,15 @@ with tempfile.TemporaryDirectory() as temp_dir:
     
     anexo_path = os.path.join(temp_dir, anexo_file)
 
-    # PDF extraction
+    # PDF extraction with better configuration
     print("Extracting tables from PDF ------")
-    dfs = tabula.read_pdf(
-        anexo_path,
-        pages='1',  # Test with first page
-        lattice=True
-    )
-    print(f"✅ Found {len(dfs)} tables in first page")
+    try:
+        dfs = tabula.read_pdf(
+            anexo_path,
+            pages='1',
+            lattice=True,
+        )
+        print(f"Found {len(dfs)} tables")
+            
+    except Exception as e:
+        print(f"Extraction failed: {str(e)}")
