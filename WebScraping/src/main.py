@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+import zipfile
 
 target_url = 'https://www.gov.br/ans/pt-br/acesso-a-informacao/participacao-da-sociedade/atualizacao-do-rol-de-procedimentos'
 
@@ -50,3 +51,14 @@ for link in pdf_links:
         print(f"Error: {str(e)}")
 
 print(f"\nDownloads: {len(downloaded_files)} succeeded, {failure_count} failed")
+
+# Zip files
+if downloaded_files:
+    with zipfile.ZipFile('Pdfs.zip', 'w') as zipf:
+        for file in downloaded_files:
+            filepathzip = os.path.join('pdfs', file)
+            zipf.write(filepathzip, os.path.basename(filepathzip))
+            os.remove(filepathzip)
+    print(f'Zip created: Pdfs.zip in {os.path('pdfs')}')
+else:
+    print('No files downloaded')
