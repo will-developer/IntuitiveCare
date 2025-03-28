@@ -3,7 +3,7 @@ import os
 import tempfile
 
 # Configure paths
-zip_path = os.path.join('..', '..', 'WebScraping', 'pdfs', 'Anexos.zip')
+zip_path = os.path.join(os.path.dirname(__file__), '..', '..', 'WebScraping', 'pdfs', 'Anexos.zip')
 
 with tempfile.TemporaryDirectory() as temp_dir:
     # Extract Anexo I
