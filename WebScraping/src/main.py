@@ -54,11 +54,12 @@ print(f"\nDownloads: {len(downloaded_files)} succeeded, {failure_count} failed")
 
 # Zip files
 if downloaded_files:
-    with zipfile.ZipFile('Pdfs.zip', 'w') as zipf:
+    zip_path = os.path.join('pdfs', 'Anexos.zip')
+    with zipfile.ZipFile(zip_path, 'w') as zipf:
         for file in downloaded_files:
             filepathzip = os.path.join('pdfs', file)
             zipf.write(filepathzip, os.path.basename(filepathzip))
             os.remove(filepathzip)
-    print(f'Zip created: Pdfs.zip in {os.path('pdfs')}')
+    print(f'Created Anexos.zip in {zip_path} with {len(downloaded_files)} files')
 else:
     print('No files downloaded')
