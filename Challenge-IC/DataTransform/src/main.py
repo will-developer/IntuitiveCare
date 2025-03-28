@@ -46,6 +46,11 @@ with tempfile.TemporaryDirectory() as temp_dir:
 
     if processed_data:
         combined_df = pandas.concat(processed_data).reset_index(drop=True)
+        combined_df.rename(columns={
+        'OD': 'Seg. Odontológica',
+        'AMB': 'Seg. Ambulatorial',
+    }, inplace=True)
+        
         print("Combined dataframe shape:", combined_df.shape)
     else:
         print("No valid tables found after cleaning.")
