@@ -2,6 +2,7 @@ import zipfile
 import os
 import tempfile
 import tabula
+import pandas
 
 # paths
 zip_path = os.path.join(os.path.dirname(__file__), '..', '..', 'WebScraping', 'pdfs', 'Anexos.zip')
@@ -42,3 +43,9 @@ with tempfile.TemporaryDirectory() as temp_dir:
             processed_data.append(df)
 
     print(f"Cleaned {len(processed_data)} empty tables tables")
+
+    if processed_data:
+        combined_df = pandas.concat(processed_data).reset_index(drop=True)
+        print("Combined dataframe shape:", combined_df.shape)
+    else:
+        print("No valid tables found after cleaning.")
