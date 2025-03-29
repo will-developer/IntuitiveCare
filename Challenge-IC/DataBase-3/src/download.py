@@ -5,7 +5,7 @@ import os
 #Create Dir for place data
 def create_data_dir():
     local_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    data_dir = local_dir.parent / "data" / "operations"
+    data_dir = local_dir.parent / "data" / "download"
     data_dir.mkdir(parents=True, exist_ok=True)
     return data_dir
 
@@ -14,7 +14,17 @@ url = "https://dadosabertos.ans.gov.br/FTP/PDA/operadoras_de_plano_de_saude_ativ
 try:
     response = requests.get(url)
     response.raise_for_status()
-    print(f"Successful Request: (status {response.status_code})")
-    create_data_dir() 
+    print(f"\nSuccessful Request: (status {response.status_code})")
+
+    data_dir = create_data_dir() 
+
+    if 'text/csv' not in response.headers.get('Content-Type', ''):
+            print("\n Error in content type")
+    else:
+        # Save file
+        output_path = data_dir / "archive.csv"
+        output_path.write_bytes(response.content)
+        print(f"\nSuccessful saved ({len(response.content)} bytes)")
+
 except requests.exceptions.RequestException as e:
     print(f"Download failed: {str(e)}")
