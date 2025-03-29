@@ -55,13 +55,15 @@ with tempfile.TemporaryDirectory() as temp_dir:
     else:
         print("No valid tables found after cleaning.")
 
-    output_dir = 'csvFile'
+    # Generate output file
+    output_dir = os.path.join(os.path.dirname(__file__), '..', 'csvFile')
     os.makedirs(output_dir, exist_ok=True)
 
     temp_csv = os.path.join(temp_dir, 'csvFile.csv')
     combined_df.to_csv(temp_csv, index=False)
 
-    final_zip = os.path.join(output_dir, 'result.zip')
+    # Create final ZIP archive
+    final_zip = os.path.join(output_dir, 'csv.zip')
     with zipfile.ZipFile(final_zip, 'w') as zipf:
         zipf.write(temp_csv, 'csvFile.csv')
 
