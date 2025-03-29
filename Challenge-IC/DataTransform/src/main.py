@@ -54,3 +54,15 @@ with tempfile.TemporaryDirectory() as temp_dir:
         print("Combined dataframe shape:", combined_df.shape)
     else:
         print("No valid tables found after cleaning.")
+
+    output_dir = 'csvFile'
+    os.makedirs(output_dir, exist_ok=True)
+
+    temp_csv = os.path.join(temp_dir, 'csvFile.csv')
+    combined_df.to_csv(temp_csv, index=False)
+
+    final_zip = os.path.join(output_dir, 'result.zip')
+    with zipfile.ZipFile(final_zip, 'w') as zipf:
+        zipf.write(temp_csv, 'csvFile.csv')
+
+    print(f"Output saved to {final_zip}")
