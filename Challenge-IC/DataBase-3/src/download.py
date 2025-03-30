@@ -1,6 +1,10 @@
 import requests
 from pathlib import Path
 import os
+import logging
+
+#Log Configuration
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 #Create Dir for place data
 def create_data_dir():
