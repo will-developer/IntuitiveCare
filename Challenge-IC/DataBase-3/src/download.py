@@ -13,10 +13,11 @@ def create_data_dir():
     data_dir.mkdir(parents=True, exist_ok=True)
     return data_dir
 
-url = "https://dadosabertos.ans.gov.br/FTP/PDA/operadoras_de_plano_de_saude_ativas/Relatorio_cadop.csv"
+BASE_URL_ACCOUNTING = "https://dadosabertos.ans.gov.br/FTP/PDA/demonstracoes_contabeis/"
+URL_OPERATORS_CSV = "https://dadosabertos.ans.gov.br/FTP/PDA/operadoras_de_plano_de_saude_ativas/Relatorio_cadop.csv"
 
 try:
-    response = requests.get(url)
+    response = requests.get(URL_OPERATORS_CSV)
     response.raise_for_status()
     print(f"\nSuccessful Request: (status {response.status_code})")
 
