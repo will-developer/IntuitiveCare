@@ -1,4 +1,17 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+defineProps<{
+  modelValue: string 
+}>()
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void
+}>()
+
+function handleInput(event: Event) {
+  const target = event.target as HTMLInputElement
+  emit('update:modelValue', target.value)
+}
+</script>
 
 <template>
   <div class="search-container">
@@ -6,6 +19,8 @@
     <input
       id="search-input"
       type="text"
+      :value="modelValue"
+      @input="handleInput"
       placeholder="Enter Operator Name, CNPJ, City..."
       aria-label="Operator search input"
     />
