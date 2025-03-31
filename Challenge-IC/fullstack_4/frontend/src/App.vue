@@ -1,8 +1,23 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import SearchBar from './components/SearchBar.vue'
+import ResultsList from './components/ResultsList.vue'
+
+const searchQuery = ref('')
+const searchResults = ref<any[]>([])
+const isLoading = ref(false)
+const error = ref<string | null>(null)
+</script>
 
 <template>
   <div id="app-container">
     <h1>ANS Operator Search</h1>
+    <SearchBar v-model="searchQuery" />
+    <ResultsList
+      :results="searchResults"
+      :is-loading="isLoading"
+      :error="error"
+    />
   </div>
 </template>
 
