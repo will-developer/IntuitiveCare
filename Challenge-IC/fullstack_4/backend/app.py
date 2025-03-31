@@ -50,7 +50,8 @@ except Exception as e:
 def index():
     if df.empty:
         return jsonify({"message": "API is running, but data is not loaded."})
-    return jsonify({"message": "API is running and data loaded.", "shape": df.shape})
+    else:
+        return jsonify({"message": "API is running and data loaded.", "shape": df.shape})
 
 @app.route('/api/search', methods=['GET'])
 def search():
@@ -66,12 +67,8 @@ def search():
 
     try:
         columns_to_search = [
-            'Razao_Social',
-            'Nome_Fantasia',
-            'Registro_ANS',
-            'CNPJ',
-            'Cidade',
-            'UF'
+            'Razao_Social', 'Nome_Fantasia', 'Registro_ANS',
+            'CNPJ', 'Cidade', 'UF'
         ]
 
         existing_columns = [col for col in columns_to_search if col in df.columns]
@@ -86,7 +83,11 @@ def search():
         ).any(axis=1)
 
         filtered_df = df.loc[mask]
-        results = filtered_df.to_dict(orient='records')
+        limited_df = filtered_df.head(50)
+
+        results_df_filled = limited_df.fillna('')
+
+        results = results_df_filled.to_dict(orient='records')
 
         return jsonify(results)
 
@@ -94,6 +95,7 @@ def search():
         print(f"An error occurred during search: {e}")
         print(traceback.format_exc())
         return jsonify({"error": "Internal server error during search"}), 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
