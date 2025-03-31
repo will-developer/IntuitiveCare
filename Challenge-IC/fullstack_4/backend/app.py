@@ -25,10 +25,12 @@ except Exception as e:
     print(f"An error occurred during CSV loading: {e}")
     df = pd.DataFrame()
 
-
 @app.route('/')
 def index():
-    return jsonify({"message": "API is running"})
+    if df.empty:
+        return jsonify({"message": "API is running, but data is not loaded."})
+    else:
+        return jsonify({"message": "API is running and data loaded.", "shape": list(df.shape)})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
