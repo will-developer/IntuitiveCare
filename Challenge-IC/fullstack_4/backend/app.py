@@ -7,7 +7,6 @@ app = Flask(__name__)
 CORS(app)
 
 df = pd.DataFrame()
-csv_path = ""
 
 try:
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,7 +19,6 @@ try:
 
 except FileNotFoundError:
     print(f"Error: CSV file not found at {csv_path}. DataFrame remains empty.")
-    df = pd.DataFrame()
 except Exception as e:
     print(f"An error occurred during CSV loading: {e}")
     df = pd.DataFrame()
@@ -29,8 +27,7 @@ except Exception as e:
 def index():
     if df.empty:
         return jsonify({"message": "API is running, but data is not loaded."})
-    else:
-        return jsonify({"message": "API is running and data loaded.", "shape": list(df.shape)})
+    return jsonify({"message": "API is running and data loaded.", "shape": df.shape})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
