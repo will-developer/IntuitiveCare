@@ -6,7 +6,7 @@ import os
 from datetime import date
 import re
 from decimal import Decimal, InvalidOperation
-import time # Added for LOAD DATA timing
+import time
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -15,7 +15,7 @@ DB_CONFIG = {
     'user': 'root',
     'password': 'root',
     'database': 'ans_data',
-    'allow_local_infile': True # ESSENTIAL for LOAD DATA LOCAL INFILE
+    'allow_local_infile': True
 }
 
 print()
@@ -23,10 +23,10 @@ try:
     SCRIPT_DIR = Path(__file__).resolve().parent
     PROJECT_ROOT = SCRIPT_DIR.parent
     DATA_DIR = PROJECT_ROOT / "data"
-    ACCOUNTING_DIR = DATA_DIR / "accounting" # Corrected path
+    ACCOUNTING_DIR = DATA_DIR / "accounting"
     CSVS_DIR = ACCOUNTING_DIR / "csvs"
     OPERATORS_DIR = DATA_DIR / "operators"
-    OPERATORS_FILE = OPERATORS_DIR / "operators.csv" # Corrected filename
+    OPERATORS_FILE = OPERATORS_DIR / "operators.csv"
     logging.info(f"Project Root: {PROJECT_ROOT}")
     logging.info(f"Operators CSV Path: {OPERATORS_FILE}")
     logging.info(f"Accounting CSVs Dir: {CSVS_DIR}")
@@ -39,8 +39,9 @@ except NameError:
     OPERATORS_DIR = DATA_DIR / "operators"
     OPERATORS_FILE = OPERATORS_DIR / "operators.csv"
 
-CSV_ENCODINGS = ['utf-8', 'latin-1', 'cp1252'] # For read_csv fallback (not used by LOAD DATA)
-CSV_ENCODING_MYSQL = 'utf8mb4' # Use utf8mb4 for LOAD DATA, assuming CSVs are UTF-8
+
+CSV_ENCODINGS = ['utf-8', 'latin-1', 'cp1252']
+CSV_ENCODING_MYSQL = 'utf8mb4'
 
 def get_db_connection(db_config):
     try:
@@ -84,7 +85,7 @@ def execute_load_data(cnx, cursor, table_name, csv_path, load_sql):
              else:
                   logging.warning(f"LOAD DATA for '{table_name}' affected 0 rows. Check delimiters, encoding, file content, and SQL SET clauses.")
 
-        success = True # Assume success if no exception
+        success = True
 
     except mysql.connector.Error as err:
         logging.error(f"Error during LOAD DATA INFILE for '{table_name}': {err}\n")
@@ -129,7 +130,7 @@ if __name__ == "__main__":
     try:
         config_main = DB_CONFIG.copy()
         config_main['autocommit'] = True
-        connection = get_db_connection(config_main) # Use get_db_connection
+        connection = get_db_connection(config_main)
         if not connection or not connection.is_connected():
              raise Exception("Failed to establish main database connection for cleanup.")
 
@@ -153,8 +154,7 @@ if __name__ == "__main__":
         connection = None
         cursor = None
 
-        # --- Load Operators using LOAD DATA ---
-        connection = get_db_connection(DB_CONFIG) # Reconnect with allow_local_infile
+        connection = get_db_connection(DB_CONFIG)
         if not connection or not connection.is_connected():
              raise Exception("Failed to establish database connection for loading.")
         cursor = connection.cursor()
@@ -187,7 +187,6 @@ if __name__ == "__main__":
         """
         success_op, count_op = execute_load_data(connection, cursor, "operators", OPERATORS_FILE, sql_load_operadoras)
 
-        # --- Load Accounting Statements using LOAD DATA ---
         if success_op and count_op > 0:
             csv_files = list(CSVS_DIR.glob('*.csv'))
             if not csv_files:
@@ -215,10 +214,14 @@ if __name__ == "__main__":
                         )
                         SET
                             trimestre_referencia = '{trimestre_ref_sql}',
-                            vl_saldo_inicial = NULLIF(CAST(REPLACE(REPLACE(@VL_SALDO_INICIAL, '.', ''), ',', '.') AS DECIMAL(18,2)), ''),
-                            vl_saldo_final = NULLIF(CAST(REPLACE(REPLACE(@VL_SALDO_FINAL, '.', ''), ',', '.') AS DECIMAL(18,2)), ''),
-                            cd_conta_contabil = LEFT(cd_conta_contabil, 50),
-                            descricao = LEFT(descricao, 500);
+                            vl_saldo_inicial = IF(TRIM(COALESCE(@VL_SALDO_INICIAL,'')) REGEXP '^-?[0-9,.]+$',
+                                                CAST(REPLACE(REPLACE(TRIM(@VL_SALDO_INICIAL), '.', ''), ',', '.') AS DECIMAL(18,2)),
+                                                NULL),
+                            vl_saldo_final = IF(TRIM(COALESCE(@VL_SALDO_FINAL,'')) REGEXP '^-?[0-9,.]+$',
+                                              CAST(REPLACE(REPLACE(TRIM(@VL_SALDO_FINAL), '.', ''), ',', '.') AS DECIMAL(18,2)),
+                                              NULL),
+                            cd_conta_contabil = LEFT(TRIM(cd_conta_contabil), 50),
+                            descricao = LEFT(TRIM(descricao), 500);
                     """
                     formatted_sql_demonstracoes = sql_load_demonstracoes.format(
                         csv_path=str(file_path).replace('\\', '\\\\'),
