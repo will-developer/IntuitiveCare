@@ -1,18 +1,20 @@
-SET @latest_quarter = (SELECT MAX(quarter_reference_date) FROM accounting);
+-- Query 1: Top 10 Operadoras com Maiores Despesas (Saldo Final)
+
+SET @ultimo_trimestre = (SELECT MAX(trimestre_referencia) FROM accounting);
 
 SELECT
     op.Razao_Social AS OperatorName,
-    FORMAT(SUM(acc.final_balance), 2, 'de_DE') AS TotalExpense_LastQuarter
+    FORMAT(SUM(acc.vl_saldo_final), 2, 'de_DE') AS TotalExpense_LastQuarter
 FROM
     accounting acc
 JOIN
     operators op ON acc.reg_ans = op.Registro_ANS
 WHERE
-    acc.account_description = 'EVENTOS/ SINISTROS CONHECIDOS OU AVISADOS DE ASSISTÊNCIA A SAÚDE MEDICO HOSPITALAR'
-    AND acc.quarter_reference_date = @latest_quarter
-    AND acc.final_balance IS NOT NULL
+    acc.cd_conta_contabil LIKE '411%'
+    AND acc.trimestre_referencia = @ultimo_trimestre
+    AND acc.vl_saldo_final IS NOT NULL
 GROUP BY
     op.Registro_ANS, op.Razao_Social
 ORDER BY
-    SUM(acc.final_balance) DESC
+    SUM(acc.vl_saldo_final) DESC
 LIMIT 10;
