@@ -35,20 +35,24 @@ logging.info(f"\nProject paths configured.")
 logging.info(f"\nData directory: {os.path.abspath(DATA_DIR)}")
 logging.info(f"\nYears to download: {YEARS_TO_DOWNLOAD}")
 
-try:
-    response = requests.get(URL_OPERATORS_CSV)
-    response.raise_for_status()
-    print(f"\nSuccessful Request: (status {response.status_code})")
+def download_file(url, save_path, timeout=60):
+    try:
+        logging.info(f"Try to download: {url}")
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
-    data_dir = create_data_dir() 
+        response = requests.get(url, timeout=timeout) 
+        response.raise_for_status()  
 
-    if 'text/csv' not in response.headers.get('Content-Type', ''):
-            print("\n Error in content type")
-    else:
-        # Save file
-        output_path = data_dir / "archive.csv"
-        output_path.write_bytes(response.content)
-        print(f"\nSuccessful saved ({len(response.content)} bytes)")
+        with open(save_path, 'wb') as f:
+            f.write(response.content) 
 
-except requests.exceptions.RequestException as e:
-    print(f"Download failed: {str(e)}")
+        logging.info(f"Successfully downloaded and saved to: {save_path}")
+        return True
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error downloading {url}: {e}")
+        return False
+
+if __name__ == "__main__":
+    logging.info("\nDownload started.")
+    download_file(URL_OPERATORS_CSV, OPERATORS_CSV_PATH)
+    logging.info("\nDownload script finished")
