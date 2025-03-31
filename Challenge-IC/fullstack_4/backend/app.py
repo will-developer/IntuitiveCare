@@ -21,6 +21,9 @@ try:
         df = pd.read_csv(
             csv_path,
             sep=';',
+            # --- Changes Start ---
+            encoding='utf-8',
+            # --- Changes End ---
             low_memory=False,
             on_bad_lines='warn'
         )
@@ -37,11 +40,13 @@ except Exception as e:
     print(traceback.format_exc())
     df = pd.DataFrame()
 
+
 @app.route('/')
 def index():
     if df.empty:
         return jsonify({"message": "API is running, but data is not loaded."})
-    return jsonify({"message": "API is running and data loaded.", "shape": df.shape})
+    else:
+        return jsonify({"message": "API is running and data loaded.", "shape": df.shape})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
