@@ -73,7 +73,6 @@ def download_operators_csv():
 
 #Function to get zip
 def get_accounting_zip(year_url):
-    print('\n\n#################################\n\n')
     zip_links = []
     try:
         logging.info(f"Fetching ZIP links from: {year_url}\n")
@@ -103,7 +102,10 @@ def get_accounting_zip(year_url):
 
 def download_accounting():
     logging.info("\n--- Starting Accounting Statements Download ---\n")
+    success_count = 0
+    fail_count = 0
     all_zip_urls = []
+
     for year in YEARS_TO_DOWNLOAD:
         year_directory_url = urljoin(BASE_URL_ACCOUNTING, f"{year}/")
         year_zip_urls = get_accounting_zip(year_directory_url)
@@ -113,8 +115,21 @@ def download_accounting():
         logging.warning("Nothing Found in zip function\n")
         return False
 
-    logging.info(f"------------TEST: Found a total of {len(all_zip_urls)} ZIP\n")
-    return True 
+    logging.info(f"Attempting to download {len(all_zip_urls)} ZIP files...\n")
+    
+    for zip_url in all_zip_urls:
+        # Extract and save in path
+        try:
+            zip_filename = os.path.basename(zip_url)
+            zip_save_path = os.path.join(ZIPS_DIR, zip_filename)
+
+            if download_file(zip_url, zip_save_path):
+                success_count += 1
+            else:
+                fail_count += 1
+        except Exception as e:
+            logging.error(f"Error processing URL {zip_url}: {e}\n")
+            fail_count += 1
 
 if __name__ == "__main__":
     logging.info("Download started.\n")
