@@ -16,11 +16,7 @@ defineProps<{
     </div>
     <div v-else class="results-container">
       <p v-if="!results.length">Enter a search term to see results.</p>
-      <ul v-else class="results-list">
-        <li v-for="(item, index) in results" :key="index">
-          {{ item }}
-        </li>
-      </ul>
+      <pre v-else>{{ JSON.stringify(results, null, 2) }}</pre>
     </div>
   </div>
 </template>
@@ -47,16 +43,12 @@ defineProps<{
   margin-top: 20px;
 }
 
-.results-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.results-list li {
-  border: 1px solid #eee;
+pre {
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
   padding: 10px;
-  margin-bottom: 5px;
-  background-color: #fff;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 </style>
