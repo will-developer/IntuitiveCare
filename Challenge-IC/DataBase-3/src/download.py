@@ -40,7 +40,7 @@ def create_data_directories():
             logging.error(f"Failed to create DIR: {dir_path}: {e}\n")
     logging.info("Created data directories.\n")
 
-#Function to download CSV Operator (For now)
+#Function to download files
 def download_file(url, save_path, timeout=60):
     try:
         logging.info(f"Try to download: {url}\n")
@@ -57,9 +57,20 @@ def download_file(url, save_path, timeout=60):
     except requests.exceptions.RequestException as e:
         logging.error(f"Error downloading {url}: {e}\n")
         return False
+    
+#Download CSV Operators    
+def download_operators_csv():
+    logging.info("--- Starting Operators CSV Download ---\n")
+    success = download_file(URL_OPERATORS_CSV, OPERATORS_CSV_PATH)
+    if success:
+        logging.info("Operators CSV downloaded successfully.\n")
+    else:
+        logging.warning("Operators CSV download failed.\n")
+    logging.info("--- Finished Operators CSV Download ---\n")
+    return success
 
 if __name__ == "__main__":
     logging.info("Download started.\n")
     create_data_directories()
-    download_file(URL_OPERATORS_CSV, OPERATORS_CSV_PATH)
+    download_operators_csv()
     logging.info("Download script finished\n")
