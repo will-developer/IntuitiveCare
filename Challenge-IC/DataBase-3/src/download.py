@@ -26,6 +26,21 @@ CSVS_DIR = ACCOUNTING_DIR / "csvs"
 OPERATORS_DIR = DATA_DIR / "operators"
 OPERATORS_CSV_PATH = OPERATORS_DIR / "operators.csv"
 
+logging.info(f"Project paths configured.\n")  
+logging.info(f"Data directory: {DATA_DIR.resolve()}\n")
+logging.info(f"Years to download: {YEARS_TO_DOWNLOAD}\n")
+
+#Function to create all files
+def create_data_directories():
+    dirs_create = [DATA_DIR, ACCOUNTING_DIR, ZIPS_DIR, CSVS_DIR, OPERATORS_DIR]
+    for dir_path in dirs_create:
+        try:
+            os.makedirs(dir_path, exist_ok=True)
+        except OSError as e:
+            logging.error(f"Failed to create DIR: {dir_path}: {e}\n")
+    logging.info("Created data directories.\n")
+
+#Function to download CSV Operator (For now)
 def download_file(url, save_path, timeout=60):
     try:
         logging.info(f"Try to download: {url}\n")
@@ -45,5 +60,6 @@ def download_file(url, save_path, timeout=60):
 
 if __name__ == "__main__":
     logging.info("Download started.\n")
+    create_data_directories()
     download_file(URL_OPERATORS_CSV, OPERATORS_CSV_PATH)
     logging.info("Download script finished\n")
