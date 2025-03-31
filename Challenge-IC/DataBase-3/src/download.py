@@ -26,13 +26,9 @@ CSVS_DIR = ACCOUNTING_DIR / "csvs"
 OPERATORS_DIR = DATA_DIR / "operators"
 OPERATORS_CSV_PATH = OPERATORS_DIR / "operators.csv"
 
-logging.info(f"\nProject paths configured.")  
-logging.info(f"Data directory: {DATA_DIR.resolve()}")
-logging.info(f"\nYears to download: {YEARS_TO_DOWNLOAD}")
-
 def download_file(url, save_path, timeout=60):
     try:
-        logging.info(f"Try to download: {url}")
+        logging.info(f"Try to download: {url}\n")
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
         response = requests.get(url, timeout=timeout) 
@@ -41,13 +37,13 @@ def download_file(url, save_path, timeout=60):
         with open(save_path, 'wb') as f:
             f.write(response.content) 
 
-        logging.info(f"Successfully downloaded and saved to: {save_path}")
+        logging.info(f"Successfully downloaded and saved to: {save_path}\n")
         return True
     except requests.exceptions.RequestException as e:
-        logging.error(f"Error downloading {url}: {e}")
+        logging.error(f"Error downloading {url}: {e}\n")
         return False
 
 if __name__ == "__main__":
-    logging.info("\nDownload started.")
+    logging.info("Download started.\n")
     download_file(URL_OPERATORS_CSV, OPERATORS_CSV_PATH)
-    logging.info("\nDownload script finished")
+    logging.info("Download script finished\n")
