@@ -13,6 +13,7 @@ defineProps<{
   results: OperatorResult[]
   isLoading: boolean
   error: string | null
+  searchQuery: string
 }>()
 </script>
 
@@ -25,8 +26,7 @@ defineProps<{
       <p><strong>Error:</strong> {{ error }}</p>
     </div>
     <div v-else class="results-container">
-      <p v-if="!results.length">Enter a search term to see results.</p>
-      <ul v-else class="results-list">
+      <ul v-if="results.length > 0" class="results-list">
         <li v-for="item in results" :key="item.Registro_ANS || item.CNPJ" class="result-item">
           <h2>{{ item.Razao_Social }}</h2>
           <p v-if="item.Nome_Fantasia"><strong>Fantasia:</strong> {{ item.Nome_Fantasia }}</p>
@@ -35,6 +35,12 @@ defineProps<{
           <p v-if="item.Cidade && item.UF"><strong>Cidade/UF:</strong> {{ item.Cidade }} / {{ item.UF }}</p>
         </li>
       </ul>
+      <p v-else-if="searchQuery.trim() && !isLoading">
+        No results found for "{{ searchQuery }}".
+      </p>
+      <p v-else-if="!searchQuery.trim() && !isLoading">
+        Enter a search term to see results.
+      </p>
     </div>
   </div>
 </template>

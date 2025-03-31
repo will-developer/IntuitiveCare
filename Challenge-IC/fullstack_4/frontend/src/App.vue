@@ -14,19 +14,25 @@ async function fetchResults() {
   if (!searchQuery.value.trim()) {
     searchResults.value = []
     error.value = null
+    isLoading.value = false
     return
   }
 
   isLoading.value = true
   error.value = null
-  searchResults.value = []
 
   try {
     const url = `${API_URL}?q=${encodeURIComponent(searchQuery.value.trim())}`
     const response = await fetch(url)
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+       let errorMsg = `HTTP error! status: ${response.status}`
+       try {
+           const errorData = await response.json()
+           errorMsg = errorData.error || errorMsg
+       } catch (parseError) {
+       }
+       throw new Error(errorMsg)
     }
 
     const data = await response.json()
@@ -44,6 +50,7 @@ async function fetchResults() {
 watch(searchQuery, () => {
   fetchResults()
 })
+
 </script>
 
 <template>
@@ -54,6 +61,7 @@ watch(searchQuery, () => {
       :results="searchResults"
       :is-loading="isLoading"
       :error="error"
+      :search-query="searchQuery"
     />
   </div>
 </template>
