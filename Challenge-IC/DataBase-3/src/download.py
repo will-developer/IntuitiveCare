@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import zipfile
 
 #Log Configuration
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -100,10 +101,26 @@ def get_accounting_zip(year_url):
 
     return zip_links
 
+def extract_zip(zip_path, extract_dir):
+    try:
+        logging.info(f"\nExtracting '{os.path.basename(zip_path)}' to '{extract_dir}\n")
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_dir)
+        logging.info(f"Successfully extracted: {zip_path}\n")
+        return True
+    except (zipfile.BadZipFile, FileNotFoundError, OSError) as e:
+        logging.error(f"Error extracting {zip_path}: {e}\n")
+        return False
+    except Exception as e:
+        logging.error(f"Unexpected error extracting {zip_path}: {e}\n")
+        return False
+
 def download_accounting():
     logging.info("\n--- Starting Accounting Statements Download ---\n")
     success_count = 0
     fail_count = 0
+    extraction_success_count = 0
+    extraction_failure_count = 0
     all_zip_urls = []
 
     for year in YEARS_TO_DOWNLOAD:
@@ -125,6 +142,10 @@ def download_accounting():
 
             if download_file(zip_url, zip_save_path):
                 success_count += 1
+                if extract_zip(zip_save_path, CSVS_DIR):
+                    extraction_success_count += 1
+                else:
+                  extraction_failure_count += 1
             else:
                 fail_count += 1
         except Exception as e:
