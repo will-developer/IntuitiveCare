@@ -53,5 +53,9 @@ def index():
     else:
         return jsonify({"message": "API is running and data loaded.", "shape": df.shape})
 
+@app.route('/api/search', methods=['GET'])
+def search():
+    return jsonify([])
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
