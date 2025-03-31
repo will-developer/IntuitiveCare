@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import pandas as pd
 import os
@@ -55,7 +55,18 @@ def index():
 
 @app.route('/api/search', methods=['GET'])
 def search():
+    if df.empty:
+        print("Search attempt failed: DataFrame is empty or not loaded.")
+        return jsonify({"error": "Data not loaded or CSV empty"}), 500
+
+    query = request.args.get('q', default='', type=str).lower().strip()
+    print(f"Received search query: {query}")
+
+    if not query:
+        return jsonify([])
+
     return jsonify([])
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
