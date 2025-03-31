@@ -5,9 +5,9 @@ charset-normalizer==3.4.1
 distro==1.9.0
 idna==3.10
 jpype1==1.5.2
+mysql-connector-python==9.2.0
 numpy==2.2.4
 packaging==24.2
-panda==0.3.1
 pandas==2.2.3
 python-dateutil==2.9.0.post0
 pytz==2025.2
