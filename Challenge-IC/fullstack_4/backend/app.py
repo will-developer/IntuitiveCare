@@ -21,9 +21,14 @@ try:
         df = pd.read_csv(
             csv_path,
             sep=';',
-            # --- Changes Start ---
             encoding='utf-8',
-            # --- Changes End ---
+            dtype={'CEP': str,
+                   'CNPJ': str,
+                   'Registro_ANS': str,
+                   'DDD': str,
+                   'Telefone': str,
+                   'Fax': str
+                   },
             low_memory=False,
             on_bad_lines='warn'
         )
