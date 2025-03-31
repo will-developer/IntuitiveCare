@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 import mysql.connector
 
 #Log Configuration
@@ -11,10 +12,20 @@ DB_CONFIG = {
     'database': 'ans_data'
 }
 
+# Define project paths
+print()
+DIR = Path(__file__).resolve().parent
+#Create Main Folder
+DATA_DIR = DIR.parent / "data"
+ACCOUNTING_DIR = DATA_DIR / "accounting"
+OPERATORS_DIR = DATA_DIR / "operators"
+
+# Encoding a usar
+CSV_ENCODING_MYSQL = "utf8mb4"
+
 def test_db_connection(db_config):
     try:
         connection = mysql.connector.connect(**db_config)
-        print()
         logging.info("Successfully connected to the database.\n")
         connection.close()
         return True
