@@ -101,6 +101,7 @@ def get_accounting_zip(year_url):
 
     return zip_links
 
+#Function to extract zip into files
 def extract_zip(zip_path, extract_dir):
     try:
         logging.info(f"\nExtracting '{os.path.basename(zip_path)}' to '{extract_dir}\n")
@@ -115,6 +116,7 @@ def extract_zip(zip_path, extract_dir):
         logging.error(f"Unexpected error extracting {zip_path}: {e}\n")
         return False
 
+#function to execute downloads of accounting files
 def download_accounting():
     logging.info("\n--- Starting Accounting Statements Download ---\n")
     success_count = 0
@@ -151,10 +153,17 @@ def download_accounting():
         except Exception as e:
             logging.error(f"Error processing URL {zip_url}: {e}\n")
             fail_count += 1
+    
+    logging.info(f"\nSuccessfully downloaded: {success_count} files.\n")
+    logging.info(f"Failed downloads: {fail_count} files.\n")
+    logging.info(f"Successfully extracted: {extraction_success_count} files.\n")
+    logging.info(f"Failed extractions: {extraction_failure_count} files.\n")
+    logging.info("--- Finished Accounting Statements Download & Extraction ---\n")
+    return extraction_success_count > 0
 
 if __name__ == "__main__":
     logging.info("Download started.\n")
     create_data_directories()
     download_operators_csv()
     download_accounting()
-    logging.info("\n\nDownload script finished\n")
+    logging.info("\nDownload script finished\n")
