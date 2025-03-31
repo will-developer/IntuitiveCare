@@ -65,13 +65,22 @@ def search():
         return jsonify([])
 
     try:
-        columns_to_search = ['Razao_Social', 'Nome_Fantasia', 'CNPJ']
+        columns_to_search = [
+            'Razao_Social',
+            'Nome_Fantasia',
+            'Registro_ANS',
+            'CNPJ',
+            'Cidade',
+            'UF'
+        ]
+
         existing_columns = [col for col in columns_to_search if col in df.columns]
         if not existing_columns:
              print("Warning: None of the specified search columns exist.")
              return jsonify([])
 
         print(f"Searching in columns: {existing_columns}")
+
         mask = df[existing_columns].apply(
             lambda col: col.astype(str).str.lower().str.contains(query, na=False)
         ).any(axis=1)
