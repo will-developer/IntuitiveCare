@@ -32,3 +32,8 @@ CREATE TABLE accounting (
     vl_saldo_inicial DECIMAL(18, 2) NULL COMMENT 
     vl_saldo_final DECIMAL(18, 2) NULL COMMENT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE demonstracoes_contabeis
+ADD CONSTRAINT fk_dc_operadora
+FOREIGN KEY (reg_ans) REFERENCES operadoras(Registro_ANS)
+ON DELETE RESTRICT ON UPDATE CASCADE;
