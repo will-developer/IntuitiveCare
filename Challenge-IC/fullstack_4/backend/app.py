@@ -60,9 +60,17 @@ def search():
         return jsonify({"error": "Data not loaded or CSV empty"}), 500
 
     query = request.args.get('q', default='', type=str).lower().strip()
-    print(f"Received search query: {query}")
+    print(f"Received general search query: {query}")
 
-    if not query:
+    ddd_filter = request.args.get('ddd')
+    telefone_filter = request.args.get('telefone')
+
+    if ddd_filter:
+        print(f"Received DDD filter: {ddd_filter}")
+    if telefone_filter:
+        print(f"Received Telefone filter: {telefone_filter}")
+
+    if not query and not ddd_filter and not telefone_filter:
         return jsonify([])
 
     try:
