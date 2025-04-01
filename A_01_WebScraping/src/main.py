@@ -1,65 +1,53 @@
-import requests
-from bs4 import BeautifulSoup
-import os
-import zipfile
+# src/main.py
+import logging
 
-target_url = 'https://www.gov.br/ans/pt-br/acesso-a-informacao/participacao-da-sociedade/atualizacao-do-rol-de-procedimentos'
+from config import (
+    BASE_URL, DOWNLOAD_DIR, ZIP_FILEPATH, LINK_SELECTOR,
+    LINK_TEXT_KEYWORDS, LINK_SUFFIX, REQUEST_TIMEOUT
+)
 
-# Page fetch
-page = requests.get(target_url)
-soup = BeautifulSoup(page.text, 'html.parser')
+from core.use_cases.download_use_case import DownloadUseCase
 
-# Link detection 
-pdf_links = []
-for link in soup.find_all('a', class_='internal-link'):
-    href = link.get('href', '')
-    link_text = link.text.strip()
+from adapters.http_gateway import RequestsHttpGateway
+from adapters.html_parser import BeautifulSoupHtmlParser
+from adapters.file_downloader import RequestsFileDownloader
+from adapters.archive_manager import ZipArchiveManager
+from adapters.file_manager import FileSystemManager
 
-    if href.endswith('.pdf') and ('Anexo I' in link_text or 'Anexo II' in link_text):
-        pdf_links.append(href)
-        #print(f'Found! {pdf_links}\n ------')
-    if not pdf_links:
-        print('No Anexos found!')
-        exit()
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-#Pdf dowloader
-if not os.path.exists('pdfs'):
-    os.makedirs('pdfs')
+def run():
+    """Configures and runs the application."""
+    logging.info("Setting up application dependencies...")
 
-downloaded_files = []
-failure_count = 0
+    http_gateway = RequestsHttpGateway()
+    html_parser = BeautifulSoupHtmlParser()
+    file_downloader = RequestsFileDownloader()
+    archive_manager = ZipArchiveManager()
+    file_manager = FileSystemManager()
 
-print("\nStart PDF downloads -----")
-for link in pdf_links:
-    filename = link.split('/')[-1]
-    print(f"download the: {filename}")
+    download_use_case = DownloadUseCase(
+        http_gateway=http_gateway,
+        html_parser=html_parser,
+        file_downloader=file_downloader,
+        archive_manager=archive_manager,
+        file_manager=file_manager,
+    )
 
+    logging.info("Executing the main use case...")
     try:
-        response = requests.get(link, timeout=10)
-        response.raise_for_status()
-        
-        filepath = os.path.join('pdfs', filename)
-        with open(filepath, 'wb') as f:
-            f.write(response.content)
-            
-        downloaded_files.append(filename)
-        print(f"Success: {filename}")
-        
+        download_use_case.execute(
+            url=BASE_URL,
+            download_dir=DOWNLOAD_DIR,
+            zip_filepath=ZIP_FILEPATH,
+            selector=LINK_SELECTOR,
+            keywords=LINK_TEXT_KEYWORDS,
+            suffix=LINK_SUFFIX,
+            timeout=REQUEST_TIMEOUT
+        )
+        logging.info("Use case execution completed.")
     except Exception as e:
-        failure_count += 1
-        print(f"Failed: {filename}")
-        print(f"Error: {str(e)}")
+        logging.exception(f"An unexpected error occurred during the main execution flow: {e}")
 
-print(f"\nDownloads: {len(downloaded_files)} succeeded, {failure_count} failed")
-
-# Zip files
-if downloaded_files:
-    zip_path = os.path.join('pdfs', 'Anexos.zip')
-    with zipfile.ZipFile(zip_path, 'w') as zipf:
-        for file in downloaded_files:
-            filepathzip = os.path.join('pdfs', file)
-            zipf.write(filepathzip, os.path.basename(filepathzip))
-            os.remove(filepathzip)
-    print(f'Created Anexos.zip in {zip_path} with {len(downloaded_files)} files')
-else:
-    print('No files downloaded')
+if __name__ == "__main__":
+    run()
