@@ -4,7 +4,7 @@ import tempfile
 import pandas
 import logging
 import sys
-from typing import List, Dict, Optional
+from typing import Optional
 
 from . import config
 from .application import processing
