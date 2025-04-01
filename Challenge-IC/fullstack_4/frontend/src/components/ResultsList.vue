@@ -27,7 +27,7 @@ defineProps<{
 <template>
   <div class="results-display">
     <div v-if="isLoading" class="loading">
-      Loading...
+      Carregando...
     </div>
     <div v-else-if="error" class="error-message">
       <p><strong>Error:</strong> {{ error }}</p>
@@ -50,10 +50,10 @@ defineProps<{
         </li>
       </ul>
       <p v-else-if="searchQuery.trim() && !isLoading">
-        No results found for "{{ searchQuery }}".
+        Nenhum resultado foi achado para "{{ searchQuery }}".
       </p>
       <p v-else-if="!searchQuery.trim() && !isLoading">
-        Enter a search term to see results.
+        Digite algo para ver os resultados.
       </p>
     </div>
   </div>
@@ -106,14 +106,11 @@ defineProps<{
   margin: 5px 0;
   font-size: 0.95em;
   color: #444;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .result-item strong {
     color: #333;
     margin-right: 5px;
-    display: inline-block; 
-    width: 120px;        
-    font-size: 0.95em;  
 }
 </style>
