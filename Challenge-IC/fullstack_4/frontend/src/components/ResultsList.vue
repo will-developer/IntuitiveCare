@@ -103,14 +103,17 @@ defineProps<{
 }
 
 .result-item p {
-  margin: 4px 0;
+  margin: 5px 0;
   font-size: 0.95em;
   color: #444;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .result-item strong {
     color: #333;
     margin-right: 5px;
+    display: inline-block; 
+    width: 90px;        
+    font-size: 0.95em;  
 }
 </style>
