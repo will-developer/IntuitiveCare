@@ -8,7 +8,7 @@ const { searchQuery, searchResults, isLoading, error } = useOperatorSearch()
 
 <template>
   <div id="app-container">
-    <h1>ANS Operator Search</h1>
+    <h1>Busca de Operadoras ANS</h1>
     <SearchBar v-model="searchQuery" />
     <ResultsList
       :results="searchResults"
@@ -32,6 +32,7 @@ const { searchQuery, searchResults, isLoading, error } = useOperatorSearch()
 
 h1 {
   text-align: center;
+  color: #2c3e50;
   margin-bottom: 25px;
 }
 </style>
