@@ -15,14 +15,14 @@ function handleInput(event: Event) {
 
 <template>
   <div class="search-container">
-    <label for="search-input">Search:</label>
+    <label for="search-input">Procurar:</label>
     <input
       id="search-input"
       type="text"
       :value="modelValue"
       @input="handleInput"
-      placeholder="Enter Operator Name, CNPJ, City..."
-      aria-label="Operator search input"
+      placeholder="Digite Razão Social, Fantasia, CNPJ, Cidade.."
+      aria-label="Campo de busca de operadoras"
     />
   </div>
 </template>
