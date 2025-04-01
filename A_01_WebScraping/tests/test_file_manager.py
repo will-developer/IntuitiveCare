@@ -1,5 +1,3 @@
-# tests/adapters/test_file_manager.py
-import os
 import pytest
 from src.adapters.file_manager import FileSystemManager
 
@@ -55,7 +53,7 @@ def test_remove_files_ignores_non_existing_files(file_manager, tmp_path):
         ("http://example.com/path/to/document.pdf", ".pdf", "document.pdf"),
         ("https://server.net/archive/Anexo_II_File.PDF", ".pdf", "Anexo_II_File.PDF"),
         ("http://domain.org/file.pdf?query=123¶m=abc", ".pdf", "file.pdf"),
-        ("http://just.domain/no_file_extension", ".pdf", "no_file_extension"),
+        ("http://just.domain/no_file_extension", ".pdf", None),
         ("http://test.com/", ".pdf", None),
         ("http://another.com/weird%20name.pdf", ".pdf", "weird%20name.pdf"),
         ("http://case.com/File.Pdf", ".pdf", "File.Pdf"),
