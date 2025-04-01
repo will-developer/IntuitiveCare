@@ -113,7 +113,7 @@ defineProps<{
     color: #333;
     margin-right: 5px;
     display: inline-block; 
-    width: 90px;        
+    width: 120px;        
     font-size: 0.95em;  
 }
 </style>
