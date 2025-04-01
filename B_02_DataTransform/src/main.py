@@ -1,65 +1,29 @@
-import tempfile
 import logging
 import sys
-import zipfile
-
 from . import config
-from .application import processing
-from .adapters import file_system_adapter
-from .adapters import pdf_reader_adapter
+from .application import pipeline
 
-logging.basicConfig(
-    level=config.LOG_LEVEL,
-    format=config.LOG_FORMAT,
-    stream=sys.stdout
-)
-logger = logging.getLogger(__name__)
-
-def run_pipeline():
-    logger.info("Starting data transformation pipeline.")
-    with tempfile.TemporaryDirectory() as temp_dir:
-        logger.info(f"Created temporary directory: {temp_dir}")
-        try:
-            extracted_pdf_path = file_system_adapter.find_and_extract_target_file(
-                zip_path=config.INPUT_ZIP_PATH,
-                target_filename_part=config.TARGET_FILENAME_PART,
-                extract_to_dir=temp_dir
-            )
-
-            raw_tables = pdf_reader_adapter.extract_tables_from_pdf(extracted_pdf_path)
-
-            processed_data = processing.process_extracted_tables(
-                tables=raw_tables,
-                column_rename_map=config.COLUMN_RENAME_MAP
-            )
-
-            file_system_adapter.save_dataframe_to_zipped_csv(
-                df=processed_data,
-                output_dir=config.OUTPUT_DIR,
-                csv_filename_in_zip=config.OUTPUT_CSV_FILENAME,
-                zip_filename=config.FINAL_ZIP_FILENAME
-            )
-
-            logger.info("Data transformation pipeline finished successfully.")
-
-        except FileNotFoundError as e:
-             logger.error(f"Pipeline aborted: Required file not found. {e}")
-             sys.exit(1)
-        except ValueError as e:
-             logger.error(f"Pipeline aborted: Data validation or configuration error. {e}")
-             sys.exit(1)
-        except zipfile.BadZipFile as e:
-             logger.error(f"Pipeline aborted: Input ZIP file is corrupted or invalid. {e}")
-             sys.exit(1)
-        except IOError as e:
-             logger.error(f"Pipeline aborted: File system I/O error (e.g., saving output). {e}")
-             sys.exit(1)
-        except ImportError as e:
-             logger.error(f"Pipeline aborted: Missing dependency. Please install required libraries. {e}")
-             sys.exit(1)
-        except Exception as e:
-            logger.error(f"An unexpected error occurred during the pipeline: {e}", exc_info=True)
-            sys.exit(1)
+try:
+    logging.basicConfig(
+        level=config.LOG_LEVEL.upper(),
+        format=config.LOG_FORMAT,
+        stream=sys.stdout
+    )
+    logger = logging.getLogger(__name__)
+    logger.debug("Logging configured successfully.")
+except Exception as e:
+    print(f"FATAL: Failed to configure logging: {e}", file=sys.stderr)
+    sys.exit(2)
 
 if __name__ == "__main__":
-    run_pipeline()
+    logger.info("Application entry point reached. Starting pipeline...")
+    try:
+        pipeline.run_pipeline()
+        logger.info("Application finished.")
+        sys.exit(0)
+    except SystemExit as e:
+        logger.info(f"Application exiting with status code {e.code}.")
+        raise
+    except Exception as e:
+        logger.critical(f"Unhandled exception at main entry point: {e}", exc_info=True)
+        sys.exit(3)
