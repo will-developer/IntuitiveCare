@@ -1,3 +1,4 @@
+# tests/adapters/test_file_system_adapter.py
 import pytest
 import pandas as pd
 import zipfile
@@ -129,7 +130,7 @@ def test_save_success(
 ):
     mock_zip_write_ref = MagicMock()
     mock_zipfile.return_value.__enter__.return_value = mock_zip_write_ref
-    mock_exists.side_effect = [True, True]
+    mock_exists.return_value = True
 
     output_dir = "/fake/output"
     csv_name = "data.csv"
@@ -143,8 +144,8 @@ def test_save_success(
     mock_to_csv.assert_called_once_with(temp_csv_path, index=False, encoding='utf-8')
     mock_zipfile.assert_called_once_with(final_zip_path, 'w', zipfile.ZIP_DEFLATED)
     mock_zip_write_ref.write.assert_called_once_with(temp_csv_path, arcname=csv_name)
-    mock_remove.assert_called_once_with(temp_csv_path)
     mock_exists.assert_called_once_with(temp_csv_path)
+    mock_remove.assert_called_once_with(temp_csv_path)
 
 def test_save_none_dataframe(fs_adapter):
     with patch('src.adapters.file_system_adapter.os.makedirs') as mock_makedirs, \
@@ -176,7 +177,7 @@ def test_save_makedirs_fails(mock_makedirs, fs_adapter, sample_dataframe):
 
 @patch('src.adapters.file_system_adapter.os.makedirs')
 @patch('src.adapters.file_system_adapter.pandas.DataFrame.to_csv', side_effect=IOError("Disk full"))
-@patch('src.adapters.file_system_adapter.os.path.exists', return_value=False)
+@patch('src.adapters.file_system_adapter.os.path.exists')
 @patch('src.adapters.file_system_adapter.os.remove')
 def test_save_to_csv_fails(
     mock_remove, mock_exists, mock_to_csv,
@@ -186,13 +187,26 @@ def test_save_to_csv_fails(
     csv_name = "data.csv"
     zip_name = "archive.zip"
     temp_csv_path = os.path.join(output_dir, f"~temp_{csv_name}.csv")
+    final_zip_path = os.path.join(output_dir, zip_name)
+
+    def exists_side_effect(path):
+        if path == temp_csv_path:
+            return True
+        elif path == final_zip_path:
+            return False
+        return False
+    mock_exists.side_effect = exists_side_effect
 
     with pytest.raises(IOError, match="Disk full"):
         fs_adapter.save_dataframe_to_zipped_csv(sample_dataframe, output_dir, csv_name, zip_name)
 
-    mock_makedirs.assert_called_once()
-    mock_to_csv.assert_called_once()
-    mock_exists.assert_called_once_with(temp_csv_path)
+    mock_makedirs.assert_called_once_with(output_dir, exist_ok=True)
+    mock_to_csv.assert_called_once_with(temp_csv_path, index=False, encoding='utf-8')
+    assert mock_exists.call_count == 2
+    mock_exists.assert_has_calls([
+        call(final_zip_path),
+        call(temp_csv_path)
+    ], any_order=True)
     mock_remove.assert_called_once_with(temp_csv_path)
 
 @patch('src.adapters.file_system_adapter.os.makedirs')
@@ -211,7 +225,11 @@ def test_save_zip_creation_fails(
     temp_csv_path = os.path.join(output_dir, f"~temp_{csv_name}.csv")
     final_zip_path = os.path.join(output_dir, zip_name)
 
-    mock_exists.side_effect = [True, True]
+    def exists_side_effect(path):
+        if path == temp_csv_path: return True
+        if path == final_zip_path: return True
+        return False
+    mock_exists.side_effect = exists_side_effect
 
     with pytest.raises(zipfile.BadZipFile, match="Zip creation failed"):
         fs_adapter.save_dataframe_to_zipped_csv(sample_dataframe, output_dir, csv_name, zip_name)
@@ -220,5 +238,8 @@ def test_save_zip_creation_fails(
     mock_to_csv.assert_called_once()
     mock_zipfile.assert_called_once()
     assert mock_exists.call_count == 2
-    assert call(final_zip_path) in mock_remove.call_args_list
-    assert call(temp_csv_path) in mock_remove.call_args_list
+    mock_remove.assert_has_calls([
+        call(final_zip_path),
+        call(temp_csv_path)
+    ], any_order=True)
+    assert mock_remove.call_count == 2
