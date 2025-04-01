@@ -1,4 +1,3 @@
-# src/application/processing.py
 import pandas
 import tabula
 import logging
