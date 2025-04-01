@@ -74,6 +74,17 @@ def search():
         return jsonify([])
 
     try:
+        filtered_df = df.copy()
+
+        if ddd_filter:
+            filtered_df = filtered_df[filtered_df['DDD'] == ddd_filter]
+        if telefone_filter:
+            filtered_df = filtered_df[filtered_df['Telefone'] == telefone_filter]
+
+        if filtered_df.empty:
+            print("No results after specific filters.")
+            return jsonify([])
+
         columns_to_search = [
             'Razao_Social', 'Nome_Fantasia', 'Registro_ANS',
             'CNPJ', 'Cidade', 'UF', 'CEP', 'Modalidade',
@@ -88,11 +99,11 @@ def search():
 
         print(f"Searching in columns: {existing_columns}")
 
-        mask = df[existing_columns].apply(
+        mask = filtered_df[existing_columns].apply(
             lambda col: col.astype(str).str.lower().str.contains(query, na=False)
         ).any(axis=1)
 
-        filtered_df = df.loc[mask].head(50)
+        filtered_df = filtered_df.loc[mask].head(50)
         results_df_filled = filtered_df.fillna('')
         results = results_df_filled.to_dict(orient='records')
 
