@@ -5,18 +5,23 @@ import zipfile
 
 from .. import config
 from . import processing
-from ..adapters import file_system_adapter
-from ..adapters import pdf_reader_adapter
+from .ports import IFileSystemAdapter, IPdfReader
+from ..adapters.file_system_adapter import LocalFileSystemAdapter
+from ..adapters.pdf_reader_adapter import TabulaPdfReader
 
 logger = logging.getLogger(__name__)
 
 def run_pipeline():
     logger.info("Starting data transformation pipeline orchestration.")
+
+    file_system: IFileSystemAdapter = LocalFileSystemAdapter()
+    pdf_reader: IPdfReader = TabulaPdfReader()
+
     with tempfile.TemporaryDirectory() as temp_dir:
         logger.info(f"Created temporary directory: {temp_dir}")
         try:
             logger.info("Step 1: Extracting PDF from source ZIP.")
-            extracted_pdf_path = file_system_adapter.find_and_extract_target_file(
+            extracted_pdf_path = file_system.find_and_extract_target_file(
                 zip_path=config.INPUT_ZIP_PATH,
                 target_filename_part=config.TARGET_FILENAME_PART,
                 extract_to_dir=temp_dir
@@ -24,7 +29,7 @@ def run_pipeline():
             logger.info(f"PDF extracted to: {extracted_pdf_path}")
 
             logger.info("Step 2: Extracting tables from PDF.")
-            raw_tables = pdf_reader_adapter.extract_tables_from_pdf(extracted_pdf_path)
+            raw_tables = pdf_reader.extract_tables_from_pdf(extracted_pdf_path)
             logger.info(f"Extracted {len(raw_tables)} raw tables.")
 
             logger.info("Step 3: Processing extracted tables.")
@@ -36,9 +41,8 @@ def run_pipeline():
                  logger.warning("Processing resulted in no data. Skipping save step.")
             else:
                  logger.info("Processing complete.")
-
                  logger.info("Step 4: Saving processed data to zipped CSV.")
-                 file_system_adapter.save_dataframe_to_zipped_csv(
+                 file_system.save_dataframe_to_zipped_csv(
                      df=processed_data,
                      output_dir=config.OUTPUT_DIR,
                      csv_filename_in_zip=config.OUTPUT_CSV_FILENAME,
