@@ -6,6 +6,7 @@ import zipfile
 from . import config
 from .application import processing
 from .adapters import file_system_adapter
+from .adapters import pdf_reader_adapter
 
 logging.basicConfig(
     level=config.LOG_LEVEL,
@@ -25,7 +26,7 @@ def run_pipeline():
                 extract_to_dir=temp_dir
             )
 
-            raw_tables = processing.extract_tables_from_pdf(extracted_pdf_path)
+            raw_tables = pdf_reader_adapter.extract_tables_from_pdf(extracted_pdf_path)
 
             processed_data = processing.process_extracted_tables(
                 tables=raw_tables,
@@ -45,13 +46,16 @@ def run_pipeline():
              logger.error(f"Pipeline aborted: Required file not found. {e}")
              sys.exit(1)
         except ValueError as e:
-             logger.error(f"Pipeline aborted: Data or configuration error. {e}")
+             logger.error(f"Pipeline aborted: Data validation or configuration error. {e}")
              sys.exit(1)
         except zipfile.BadZipFile as e:
              logger.error(f"Pipeline aborted: Input ZIP file is corrupted or invalid. {e}")
              sys.exit(1)
         except IOError as e:
-             logger.error(f"Pipeline aborted: File system I/O error. {e}")
+             logger.error(f"Pipeline aborted: File system I/O error (e.g., saving output). {e}")
+             sys.exit(1)
+        except ImportError as e:
+             logger.error(f"Pipeline aborted: Missing dependency. Please install required libraries. {e}")
              sys.exit(1)
         except Exception as e:
             logger.error(f"An unexpected error occurred during the pipeline: {e}", exc_info=True)
