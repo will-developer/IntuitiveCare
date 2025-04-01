@@ -26,7 +26,7 @@ def run():
     # Initialize all concrete implementations of the gateways/adapters
     http_gateway = RequestsHttpGateway()  # For making HTTP requests
     html_parser = BeautifulSoupHtmlParser()  # For parsing HTML content
-    file_downloader = RequestsFileDownloader()  # For downloading files
+    file_downloader = RequestsFileDownloader()  # For download files
     archive_manager = ZipArchiveManager()  # For creating zip archives
     file_manager = FileSystemManager()  # For file system operations
 
