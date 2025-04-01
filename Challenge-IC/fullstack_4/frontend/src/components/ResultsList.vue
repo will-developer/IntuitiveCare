@@ -6,6 +6,13 @@ interface OperatorResult {
   Nome_Fantasia?: string
   Cidade?: string
   UF?: string
+  CEP?: string
+  Modalidade?: string
+  Logradouro?: string
+  Bairro?: string
+  Telefone?: string
+  Endereco_eletronico?: string
+  Representante?: string
   [key: string]: any
 }
 
@@ -33,6 +40,13 @@ defineProps<{
           <p><strong>Registro ANS:</strong> {{ item.Registro_ANS }}</p>
           <p><strong>CNPJ:</strong> {{ item.CNPJ }}</p>
           <p v-if="item.Cidade && item.UF"><strong>Cidade/UF:</strong> {{ item.Cidade }} / {{ item.UF }}</p>
+          <p v-if="item.CEP"><strong>CEP:</strong> {{ item.CEP }}</p>
+          <p v-if="item.Modalidade"><strong>Modalidade:</strong> {{ item.Modalidade }}</p>
+          <p v-if="item.Logradouro"><strong>Logradouro:</strong> {{ item.Logradouro }}</p>
+          <p v-if="item.Bairro"><strong>Bairro:</strong> {{ item.Bairro }}</p>
+          <p v-if="item.Telefone"><strong>Telefone:</strong> {{ item.Telefone }}</p>
+          <p v-if="item.Endereco_eletronico"><strong>Email:</strong> {{ item.Endereco_eletronico }}</p>
+          <p v-if="item.Representante"><strong>Representante:</strong> {{ item.Representante }}</p>
         </li>
       </ul>
       <p v-else-if="searchQuery.trim() && !isLoading">
