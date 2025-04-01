@@ -1,0 +1,272 @@
+{
+  "info": {
+    "_postman_id": "dbf79ae8-7c91-469f-8a81-706985241031",
+    "name": "Active Health Plan Operators",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39399915"
+  },
+  "item": [
+    {
+      "name": "CNPJ",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q=19541931000125",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "19541931000125"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Registro ANS",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q=421545",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "421545"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cidade",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q=São Paulo",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "São Paulo"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Razão Social",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q=planos odonto",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "planos odonto"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UF",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q=MG",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "MG"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Modalidade",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q=Administradora de Benefícios",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "Administradora de Benefícios"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cep",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q=36660000",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "36660000"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Endereço",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q=AVENIDA DEZOITO DE JULHO&q=227",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "AVENIDA DEZOITO DE JULHO",
+              "description": "Rua"
+            },
+            {
+              "key": "q",
+              "value": "227",
+              "description": "Numero"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Bairro",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q=JARDIM BONFIGLIOLI",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "JARDIM BONFIGLIOLI"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Telefone",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?ddd=21&telefone=35531692",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "ddd",
+              "value": "21"
+            },
+            {
+              "key": "telefone",
+              "value": "35531692"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Email",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q=contabilidade@cbnassessoria.com.br",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "contabilidade@cbnassessoria.com.br"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Representante",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/search?q= PERCÍVEL GAETA",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": " PERCÍVEL GAETA"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
