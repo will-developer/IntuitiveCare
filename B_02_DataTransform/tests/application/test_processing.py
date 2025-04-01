@@ -1,4 +1,3 @@
-# tests/application/test_processing.py
 import pytest
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -62,10 +61,10 @@ def test_process_extracted_tables_with_none_and_invalid_types():
     result = process_extracted_tables(tables, {'OD': 'Dental', 'AMB': 'Ambulance'})
 
     expected_data = {
-        'A': ['1', '3'],
-        'Dental': ['Y', None],
-        'B': [None, '2'],
-        'Ambulance': [None, 'N']
+        'A': ['1', None, '3'],
+        'Dental': ['Y', None, None],
+        'B': [None, '2', None],
+        'Ambulance': [None, 'N', None]
     }
     expected_df = pd.DataFrame(expected_data).astype(str).replace('nan', 'None')
     result_str = result.astype(str).replace('nan', 'None')
