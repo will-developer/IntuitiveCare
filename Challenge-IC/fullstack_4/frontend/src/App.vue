@@ -7,11 +7,13 @@ const searchQuery = ref('')
 const searchResults = ref<any[]>([])
 const isLoading = ref(false)
 const error = ref<string | null>(null)
+const debounceTimer = ref<number | null>(null)
 
 const API_URL = 'http://127.0.0.1:5000/api/search'
 
 async function fetchResults() {
-  if (!searchQuery.value.trim()) {
+  const query = searchQuery.value.trim()
+  if (!query) {
     searchResults.value = []
     error.value = null
     isLoading.value = false
@@ -22,7 +24,7 @@ async function fetchResults() {
   error.value = null
 
   try {
-    const url = `${API_URL}?q=${encodeURIComponent(searchQuery.value.trim())}`
+    const url = `${API_URL}?q=${encodeURIComponent(query)}`
     const response = await fetch(url)
 
     if (!response.ok) {
@@ -30,8 +32,7 @@ async function fetchResults() {
        try {
            const errorData = await response.json()
            errorMsg = errorData.error || errorMsg
-       } catch (parseError) {
-       }
+       } catch (parseError) {}
        throw new Error(errorMsg)
     }
 
@@ -47,10 +48,15 @@ async function fetchResults() {
   }
 }
 
-watch(searchQuery, () => {
-  fetchResults()
-})
+watch(searchQuery, (newValue) => {
+  if (debounceTimer.value) {
+    clearTimeout(debounceTimer.value)
+  }
 
+  debounceTimer.value = window.setTimeout(() => {
+    fetchResults()
+  }, 500)
+})
 </script>
 
 <template>
