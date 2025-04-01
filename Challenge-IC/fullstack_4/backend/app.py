@@ -68,7 +68,9 @@ def search():
     try:
         columns_to_search = [
             'Razao_Social', 'Nome_Fantasia', 'Registro_ANS',
-            'CNPJ', 'Cidade', 'UF'
+            'CNPJ', 'Cidade', 'UF', 'CEP', 'Modalidade',
+            'Logradouro', 'Bairro', 'Telefone', 'Endereco_eletronico',
+            'Representante'
         ]
 
         existing_columns = [col for col in columns_to_search if col in df.columns]
@@ -82,11 +84,8 @@ def search():
             lambda col: col.astype(str).str.lower().str.contains(query, na=False)
         ).any(axis=1)
 
-        filtered_df = df.loc[mask]
-        limited_df = filtered_df.head(50)
-
-        results_df_filled = limited_df.fillna('')
-
+        filtered_df = df.loc[mask].head(50)
+        results_df_filled = filtered_df.fillna('')
         results = results_df_filled.to_dict(orient='records')
 
         return jsonify(results)
