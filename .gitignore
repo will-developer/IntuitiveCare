@@ -37,3 +37,5 @@ env/
 # Local files
 *pdfs/
 *.csv
+.env
+*zips/
