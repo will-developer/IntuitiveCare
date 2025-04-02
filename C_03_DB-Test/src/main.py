@@ -1,18 +1,22 @@
 import logging
 import sys
 
+# Configuration Import - Critical for application startup
 try:
-    from src import config
+    from src import config  # Main configuration module
 except ImportError as e:
-     print(f"Error importing configuration or dependencies: {e}", file=sys.stderr)
-     print("Ensure all dependencies are installed (pip install -r requirements.txt or poetry install)", file=sys.stderr)
-     print("Ensure the .env file has necessary variables set.", file=sys.stderr)
-     sys.exit(1)
+    print(f"Configuration import failed: {e}", file=sys.stderr)
+    print("Possible solutions:", file=sys.stderr)
+    print("1. Install dependencies: pip install -r requirements.txt", file=sys.stderr)
+    print("2. Check .env file exists with required variables", file=sys.stderr)
+    sys.exit(1)
 except ValueError as e:
-    print(f"Configuration Error: {e}", file=sys.stderr)
+    print(f"Invalid configuration: {e}", file=sys.stderr)
     sys.exit(1)
 
+# Application Component Imports
 try:
+    # Infrastructure Layer
     from src.infrastructure import (
         OsFileSystem,
         RequestsDownloader,
@@ -22,40 +26,49 @@ try:
         MySqlOperatorRepository,
         MySqlAccountingRepository,
     )
+    # Application Layer
     from src.application import (
         DownloadAnsDataUseCase,
         LoadAnsDataUseCase,
     )
 except ImportError as e:
-     logging.exception(f"Failed to import application/infrastructure components: {e}")
-     sys.exit(1)
+    logging.exception("Critical component import failed")
+    sys.exit(1)
 
 logger = logging.getLogger(__name__)
 
 def run():
-    logger.info("=== Application Starting ===")
-
-    logger.info("Initializing infrastructure components...")
+    """Main application execution flow."""
+    logger.info("=== ANS Data Processing Starting ===")
+    
+    # ----------------------------
+    # Infrastructure Initialization
+    # ----------------------------
+    logger.info("Building infrastructure components...")
     try:
+        # Core file operations
         file_system = OsFileSystem()
         file_downloader = RequestsDownloader()
         html_parser = Bs4HtmlParser()
         zip_extractor = ZipfileExtractor()
-
+        
+        # Database components
         db_connection_manager = MySQLConnectionManager(
             db_config=config.DB_CONFIG,
-            pool_size=config.DB_CONFIG.get('pool_size', 2)
+            pool_size=config.DB_CONFIG['pool_size']  # Uses configured pool size
         )
         operator_repo = MySqlOperatorRepository(db_connection_manager)
         accounting_repo = MySqlAccountingRepository(db_connection_manager)
-        logger.info("Infrastructure components initialized.")
-
+        
+        logger.info("Infrastructure ready")
     except Exception as e:
-        logger.exception(f"Failed to initialize infrastructure components: {e}")
-        logger.error("Application cannot proceed.")
+        logger.exception("Infrastructure setup failed")
         return
 
-    logger.info("Initializing application use cases...")
+    # --------------------------
+    # Application Layer Setup
+    # --------------------------
+    logger.info("Initializing use cases...")
     download_use_case = DownloadAnsDataUseCase(
         file_system=file_system,
         file_downloader=file_downloader,
@@ -67,28 +80,29 @@ def run():
         accounting_repo=accounting_repo,
         file_system=file_system,
     )
-    logger.info("Application use cases initialized.")
+    logger.info("Use cases initialized")
 
-    logger.info("--- Starting Download Process ---")
+    # --------------------------
+    # Execution Flow
+    # --------------------------
+    # Phase 1: Data Download
+    logger.info("--- Starting Data Download ---")
     download_successful = download_use_case.execute(config.DOWNLOAD_CONFIG)
-
+    
+    # Phase 2: Data Loading (only if download succeeded)
     if download_successful:
-        logger.info("Download process completed successfully (or partially, check logs).")
-        logger.info("--- Starting Load Process ---")
+        logger.info("--- Starting Data Loading ---")
         load_successful = load_use_case.execute(config.LOAD_CONFIG)
-        if load_successful:
-            logger.info("Load process completed successfully.")
-        else:
-            logger.error("Load process failed. Check logs for details.")
+        logger.info(f"Load process {'succeeded' if load_successful else 'failed'}")
     else:
-        logger.error("Download process failed. Skipping load process.")
+        logger.error("Download failed - skipping load phase")
 
-    logger.info("=== Application Finished ===")
+    logger.info("=== Processing Completed ===")
 
 if __name__ == "__main__":
-    project_root = config.PROJECT_ROOT
-    if str(project_root) not in sys.path:
-        sys.path.insert(0, str(project_root))
-        logger.debug(f"Added {project_root} to sys.path")
+    # Ensure project root is in Python path
+    if str(config.PROJECT_ROOT) not in sys.path:
+        sys.path.insert(0, str(config.PROJECT_ROOT))
+        logger.debug(f"Added project root to path: {config.PROJECT_ROOT}")
 
     run()

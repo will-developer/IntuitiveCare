@@ -8,29 +8,39 @@ from src.application.ports.file_system import FileSystem
 logger = logging.getLogger(__name__)
 
 class OsFileSystem(FileSystem):
+    """Concrete implementation of FileSystem using Python's os and pathlib modules."""
+
     def create_directories(self, path: Path) -> None:
+        """Creates directory structure including parents if needed."""
         try:
-            os.makedirs(path, exist_ok=True)
-            logger.debug(f"Ensured directory exists: {path}")
+            os.makedirs(path, exist_ok=True)  # exist_ok prevents errors if dir exists
+            logger.debug(f"Created directory structure at: {path}")
         except OSError as e:
-            logger.error(f"Failed to create directory: {path}: {e}")
+            logger.error(f"Directory creation failed for {path}: {e}")
             raise
 
     def list_files(self, directory: Path, pattern: str) -> List[Path]:
+        """Lists files in directory matching the given glob pattern."""
         if not directory.is_dir():
-            logger.warning(f"Directory not found for listing files: {directory}")
+            logger.warning(f"Invalid directory path: {directory}")
             return []
+            
         try:
-            return list(directory.glob(pattern))
+            files = list(directory.glob(pattern))
+            logger.debug(f"Found {len(files)} files matching {pattern} in {directory}")
+            return files
         except Exception as e:
-            logger.error(f"Error listing files in {directory} with pattern {pattern}: {e}")
-            return []
+            logger.error(f"File listing failed in {directory}: {e}")
+            return []  # Fail gracefully by returning empty list
 
     def get_absolute_path(self, path: Path) -> Path:
+        """Returns absolute version of path resolving """
         return path.resolve()
 
     def path_exists(self, path: Path) -> bool:
+        """Checks if path exists in filesystem. """
         return path.exists()
 
     def get_filename(self, path: Path) -> str:
+        """Extracts the filename component from a path."""
         return path.name
