@@ -15,18 +15,18 @@ This repository is organized into the following main components:
 
 - **`A_01_WebScraping/`**: Contains a Python script to scrape and download specific PDF annexes ("Anexo I", "Anexo II") related to 'Atualização do Rol de Procedimentos' from the ANS website, archiving them into a zip file.
 
-  - For more details, see [`A_01_WebScraping/README.md`](./A_01_WebScraping/README.md).
+  - For more details, see [`A_01_WebScraping/README.md`](https://github.com/will-developer/IntuitiveCare/tree/main/A_01_WebScraping).
 
 - **`B_02_DataTransform/`**: Implements a Python pipeline using `tabula-py` to extract, clean, and process table data from a specific PDF file (typically "Anexo I" obtained from the output of `A_01_WebScraping`) and saves the result as a zipped CSV.
 
-  - For more details, see [`B_02_DataTransform/README.md`](./B_02_DataTransform/README.md).
+  - For more details, see [`B_02_DataTransform/README.md`](https://github.com/will-developer/IntuitiveCare/tree/main/B_02_DataTransform).
 
 - **`C_03_DB-Test/`**: Downloads public ANS operator registration data (CSV) and quarterly accounting statements (ZIPs containing CSVs), then cleans and loads this data into a MySQL database.
 
-  - For more details, see [`C_03_DB-Test/README.md`](./C_03_DB-Test/README.md).
+  - For more details, see [`C_03_DB-Test/README.md`](https://github.com/will-developer/IntuitiveCare/tree/main/C_03_DB-Test).
 
 - **`D_04_FullStack/`**: A full-stack application featuring a Python Flask backend API and a Vue.js frontend. It allows users to perform textual searches and filter ANS operator data (likely sourced from `C_03_DB-Test` or a similar CSV dataset).
-  - For more details, see [`D_04_FullStack/README.md`](./D_04_FullStack/README.md).
+  - For more details, see [`D_04_FullStack/README.md`](https://github.com/will-developer/IntuitiveCare/tree/main/D_04_FullStack).
 
 ## Technology Stack Highlights
 
@@ -57,8 +57,10 @@ This repository is organized into the following main components:
     ```
 2.  **Create and activate a virtual environment:**
 
+    - On Windows with bash
+
     ```bash
-    # On Windows with bash
+    # python -m venv venv
     # source venv\Scripts\activate
     ```
 
@@ -71,12 +73,3 @@ This repository is organized into the following main components:
 
 4.  **Navigate to the desired subfolder** (example: `cd A_01_WebScraping`).
 5.  **Follow the specific setup and installation instructions** detailed in the `README.md` file within that subfolder.
-
-## Usage
-
-Each component serves a distinct purpose and has its own execution method. Please refer to the `README.md` file within each subfolder for detailed usage instructions:
-
-- [`A_01_WebScraping/README.md`](./A_01_WebScraping/README.md)
-- [`B_02_DataTransform/README.md`](./B_02_DataTransform/README.md)
-- [`C_03_DB-Test/README.md`](./C_03_DB-Test/README.md)
-- [`D_04_FullStack/README.md`](./D_04_FullStack/README.md)
