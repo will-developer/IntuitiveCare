@@ -12,14 +12,18 @@ from ..adapters.pdf_reader_adapter import TabulaPdfReader
 logger = logging.getLogger(__name__)
 
 def run_pipeline():
+    # Start the data processing pipeline
     logger.info("Starting data transformation pipeline orchestration.")
 
+    # Initialize adapters for file operations and PDF reading
     file_system: IFileSystemAdapter = LocalFileSystemAdapter()
     pdf_reader: IPdfReader = TabulaPdfReader()
 
+    # Create temporary directory for intermediate files
     with tempfile.TemporaryDirectory() as temp_dir:
         logger.info(f"Created temporary directory: {temp_dir}")
         try:
+            # Step 1: Extract PDF from source ZIP file
             logger.info("Step 1: Extracting PDF from source ZIP.")
             extracted_pdf_path = file_system.find_and_extract_target_file(
                 zip_path=config.INPUT_ZIP_PATH,
@@ -28,19 +32,24 @@ def run_pipeline():
             )
             logger.info(f"PDF extracted to: {extracted_pdf_path}")
 
+            # Step 2: Extract tables from the PDF
             logger.info("Step 2: Extracting tables from PDF.")
             raw_tables = pdf_reader.extract_tables_from_pdf(extracted_pdf_path)
             logger.info(f"Extracted {len(raw_tables)} raw tables.")
 
+            # Step 3: Process the extracted tables
             logger.info("Step 3: Processing extracted tables.")
             processed_data = processing.process_extracted_tables(
                 tables=raw_tables,
                 column_rename_map=config.COLUMN_RENAME_MAP
             )
+            
+            # Check if processing returned valid data
             if processed_data is None:
                  logger.warning("Processing resulted in no data. Skipping save step.")
             else:
                  logger.info("Processing complete.")
+                 # Step 4: Save processed data to zipped CSV
                  logger.info("Step 4: Saving processed data to zipped CSV.")
                  file_system.save_dataframe_to_zipped_csv(
                      df=processed_data,
@@ -52,9 +61,10 @@ def run_pipeline():
 
             logger.info("Data transformation pipeline finished successfully.")
 
+        # Handle different types of errors with appropriate logging
         except FileNotFoundError as e:
              logger.error(f"Pipeline failed: Required file not found. Error: {e}")
-             sys.exit(1)
+             sys.exit(1)  # Exit with error code 1
         except ValueError as e:
              logger.error(f"Pipeline failed: Data validation or configuration error. Error: {e}")
              sys.exit(1)
