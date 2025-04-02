@@ -59,6 +59,14 @@ python -m src.main
 
 - The backend will start running at `http://0.0.0.0:5000/` (accessible on your network) or `http://127.0.0.1:5000` (localhost only).
 
+## Running Tests
+
+To run the unit tests, navigate to the project root directory (`B_02_DataTransform/`) and run `pytest`:
+
+```bash
+pytest
+```
+
 **2. Frontend Setup (Vue.js with Vite):**
 
 - Open a new terminal window.
