@@ -91,6 +91,14 @@ This project downloads public registration data (CSV) and quarterly accounting s
       - Set the desired `LOG_LEVEL` (e.g., `INFO`, `DEBUG`).
     - **IMPORTANT:** The `.env` file contains sensitive information like database passwords. It is already included in `.gitignore` and **should never be committed to version control.**
 
+## Running Tests
+
+To run the unit tests, navigate to the project root directory (`B_02_DataTransform/`) and run `pytest`:
+
+```bash
+pytest
+```
+
 ## Usage
 
 To run the complete download and load process, execute the main script from the project root directory:
