@@ -35,6 +35,5 @@ env/
 *.sqlite
 
 # Local files
-*.zip
 *pdfs/
 *.csv
